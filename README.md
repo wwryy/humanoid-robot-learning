@@ -4,18 +4,32 @@ A video-driven humanoid motion-learning pipeline for **human motion recovery, mo
 
 This project was developed as part of a broader research effort on reinforcement-learning platforms for humanoid robots operating in confined-space welding environments.
 
-> 📌 **Project status:** The motion-learning and deployment pipeline has been established and validated in simulation.  
+> 📌 **Project status:** The motion-learning pipeline has been established and validated in simulation.  
 > Real-robot deployment is currently at the preliminary integration and safety-validation stage.
 
 ---
 
 ## 🔍 Overview
 
-Learning whole-body motion for humanoid robots requires several stages beyond simply training a policy.
+Whole-body motion learning for humanoid robots requires more than directly training a control policy.
 
-Human motion obtained from ordinary videos must first be reconstructed, converted to a robot-compatible representation, retargeted to the humanoid morphology, and organized into trajectories suitable for reinforcement-learning-based tracking.
+Human motion obtained from ordinary video must first be reconstructed, converted into a robot-compatible representation, retargeted to the target humanoid morphology, and organized into trajectories suitable for tracking-policy training.
 
-This project develops a staged pipeline:
+This project develops a staged workflow from monocular video input to simulation training, cross-simulation validation, motion refinement, and preparation for deployment on a physical Unitree G1 platform.
+
+---
+
+## 🧠 System Pipeline
+
+<p align="center">
+  <img src="assets/images/humanoid motion pipeline.png" width="850">
+</p>
+
+<p align="center">
+  <i>Video-driven humanoid motion pipeline from human motion recovery to policy training, cross-simulation validation, motion refinement, and real-robot deployment preparation.</i>
+</p>
+
+The overall workflow is:
 
 ```text
 Monocular Video
@@ -37,45 +51,47 @@ Motion Refinement
 Real-Robot Deployment Preparation
 ```
 
-The pipeline is designed as an intermediate step between human demonstration data and future task-specific humanoid manipulation or welding policies.
+---
+
+## 🎥 Video-Driven Human Motion Recovery
+
+Ordinary monocular video is used as the motion source.
+
+The project uses **GVHMR** to recover structured whole-body human motion from video. The recovered motion sequence is then prepared for later retargeting and policy training.
+
+This provides a practical way to obtain motion demonstrations without requiring a dedicated motion-capture system.
+
+<p align="center">
+  <img src="assets/images/video-driven full-body motion recovery.png" width="700">
+</p>
+
+<p align="center">
+  <i>Example of video-driven full-body motion recovery used as the front end of the humanoid motion-learning pipeline.</i>
+</p>
 
 ---
 
-## 🧠 System Pipeline
+## 🔁 Motion Retargeting
 
-The project combines several tools and simulation environments into one motion-learning workflow.
+Recovered human motion cannot be directly executed by a humanoid robot because the human body and the robot differ in:
 
-### 1. Video-Driven Human Motion Recovery
-
-Ordinary monocular video is used as the input source.
-
-Human whole-body motion is reconstructed using **GVHMR**, converting natural video into structured motion sequences that can be used for downstream processing.
-
-This enables motion demonstrations to be collected without requiring a dedicated motion-capture system.
-
----
-
-### 2. Motion Retargeting
-
-Recovered human motion cannot be directly executed by a humanoid robot because the human body and robot have different:
-
-- joint structures
-- link lengths
+- joint structure
+- link proportions
 - coordinate conventions
-- motion limits
-- kinematic constraints
+- kinematic limits
+- motion constraints
 
-The project therefore uses **GMR** to retarget reconstructed human motion to the target humanoid robot.
+The project uses **GMR** to retarget reconstructed human motion to the Unitree G1 humanoid robot.
 
-The resulting motion sequences are transformed into robot-compatible references for subsequent tracking-policy training.
+The retargeted motion is then converted and organized into a form suitable for downstream tracking-policy training.
 
 ---
 
-### 3. Motion Data Conversion
+## 🧩 Motion Data Conversion
 
-Motion data produced by the recovery and retargeting stages must be reorganized before reinforcement-learning training.
+The output of motion recovery and retargeting requires additional preprocessing before it can be used by the training pipeline.
 
-The conversion pipeline includes:
+The processing workflow includes:
 
 - motion-sequence organization
 - coordinate transformation
@@ -83,86 +99,60 @@ The conversion pipeline includes:
 - trajectory preprocessing
 - training-input preparation
 
-This stage connects reconstructed human demonstrations with the motion representation required by the target humanoid model.
+This stage connects human motion reconstruction with the motion representation expected by the target humanoid model.
 
 ---
 
 ## 🤖 G1 Tracking Policy Training
 
-The retargeted motion sequences are used to train a whole-body tracking policy for the **Unitree G1 humanoid robot**.
+The processed motion sequences are used to train a whole-body tracking policy for the **Unitree G1 humanoid robot**.
 
 Training is performed using **Isaac Lab** and the `whole_body_tracking` workflow.
 
-The policy learns to reproduce reference motions while maintaining stable whole-body behavior.
+The policy is designed to reproduce reference motions while maintaining stable whole-body behavior.
 
 The training process focuses on:
 
 - body-position tracking
 - joint-position tracking
 - pose consistency
+- whole-body coordination
 - motion continuity
 - episode stability
-- whole-body coordination
 
-The resulting policy provides a foundation for later task-specific humanoid control.
-
----
-
-## 🎥 Demo
-
-A motion-tracking demonstration will be added here.
-
-<!--
-<p align="center">
-  <img src="assets/g1_tracking_demo.gif" width="750">
-</p>
-
-<p align="center">
-  <i>Unitree G1 whole-body motion tracking after video-driven motion recovery, retargeting, and policy training.</i>
-</p>
-
-▶️ [Watch the full demonstration](assets/g1_tracking_demo.mp4)
--->
+The resulting policy provides a general motion-control foundation for later task-specific humanoid research.
 
 ---
 
 ## 🔄 Cross-Simulation Validation
 
-After policy training, the learned tracking policy is transferred to **RoboJuDo** for cross-simulation validation.
+After training, the tracking policy is transferred to **RoboJuDo** for cross-simulation validation.
 
-The purpose of this stage is to examine whether the learned motion behavior is tied entirely to the original simulation environment or can remain executable after being transferred to another simulator.
+The goal is to examine whether the learned behavior can remain executable outside the original training environment.
 
-The cross-simulation workflow is:
+<p align="center">
+  <img src="assets/images/RoboJuDo cross-simulation.png" width="750">
+</p>
+
+<p align="center">
+  <i>Cross-simulation execution of the G1 tracking policy in RoboJuDo.</i>
+</p>
+
+The validation workflow is:
 
 ```text
 Motion Reference
       ↓
 Isaac Lab Policy Training
       ↓
-Trained Policy
+Trained Tracking Policy
       ↓
 RoboJuDo Deployment
       ↓
 Cross-Simulation Motion Validation
 ```
 
-This stage acts as an intermediate validation step between simulation training and eventual deployment on physical hardware.
-
----
-
-## 🎥 Cross-Simulation Demo
-
-A RoboJuDo cross-simulation demonstration will be added here.
-
-<!--
-<p align="center">
-  <img src="assets/g1_robojudo_demo.gif" width="750">
-</p>
-
-<p align="center">
-  <i>Cross-simulation execution of the trained G1 tracking policy in RoboJuDo.</i>
-</p>
--->
+This stage serves as an intermediate step between simulation-based training and eventual physical-robot deployment.
 
 ---
 
@@ -173,11 +163,19 @@ Automatically recovered and retargeted motion may contain:
 - unnatural local poses
 - motion discontinuities
 - joint-pose deviations
-- artifacts introduced during motion reconstruction
+- artifacts introduced during motion reconstruction or retargeting
 
 To address these issues, the project also investigates **Blender-based motion refinement**.
 
-The workflow supports:
+<p align="center">
+  <img src="assets/images/Blender motion refinement.png" width="750">
+</p>
+
+<p align="center">
+  <i>Blender-based motion refinement and motion-data re-export workflow.</i>
+</p>
+
+The refinement pipeline is:
 
 ```text
 Motion Sequence
@@ -191,7 +189,7 @@ Motion Re-export
 Retraining
 ```
 
-This provides a practical way to manually correct problematic demonstrations before they are reused for policy training.
+This provides a practical correction loop for improving problematic motion demonstrations before reuse in policy training.
 
 ---
 
@@ -207,7 +205,13 @@ The deployment workflow includes:
 - preparing the policy for real-device inference
 - testing the deployment workflow under controlled conditions
 
-The trained policy was exported for deployment and the communication and execution pipeline with the physical platform was established.
+The trained policy was exported for deployment, and the communication and execution pipeline with the physical platform was established.
+
+### 🎥 Preliminary Hardware Demo
+
+▶️ **[Watch the Unitree G1 real-robot demonstration](assets/videos/g1_tracking_demo.mp4)**
+
+*Preliminary on-device motion demonstration during real-robot deployment preparation.*
 
 At the current stage, this work should be considered **deployment preparation rather than completed real-robot policy validation**.
 
@@ -228,53 +232,9 @@ Confined-space welding may require coordination between:
 - workspace constraints
 - task stability
 
-Instead of immediately training a complete welding policy, this project first establishes the general motion-learning and deployment infrastructure required for high-degree-of-freedom humanoid control.
+Instead of immediately training a complete welding policy, this project first establishes the motion-learning and deployment infrastructure required for high-degree-of-freedom humanoid control.
 
-Future task-specific policies can extend this framework by incorporating welding-related states, actions, rewards, and safety constraints.
-
----
-
-## 🧩 Project Architecture
-
-```text
-                ┌───────────────────────┐
-                │    Monocular Video    │
-                └───────────┬───────────┘
-                            ↓
-                ┌───────────────────────┐
-                │        GVHMR          │
-                │ Human Motion Recovery │
-                └───────────┬───────────┘
-                            ↓
-                ┌───────────────────────┐
-                │         GMR           │
-                │  Motion Retargeting   │
-                └───────────┬───────────┘
-                            ↓
-                ┌───────────────────────┐
-                │   Data Conversion     │
-                │  & Preprocessing      │
-                └───────────┬───────────┘
-                            ↓
-                ┌───────────────────────┐
-                │      Isaac Lab        │
-                │ Tracking Policy Train │
-                └───────────┬───────────┘
-                            ↓
-          ┌─────────────────┴─────────────────┐
-          ↓                                   ↓
-┌───────────────────────┐          ┌───────────────────────┐
-│       RoboJuDo        │          │        Blender        │
-│ Cross-Sim Validation  │          │  Motion Refinement    │
-└───────────┬───────────┘          └───────────┬───────────┘
-            │                                  │
-            └─────────────────┬────────────────┘
-                              ↓
-                  ┌───────────────────────┐
-                  │ Unitree G1 Deployment │
-                  │      Preparation      │
-                  └───────────────────────┘
-```
+Future task-specific work can extend this framework by incorporating welding-related states, actions, rewards, and safety constraints.
 
 ---
 
@@ -306,7 +266,7 @@ Future task-specific policies can extend this framework by incorporating welding
 - Blender
 - ONNX
 - Linux
-- SSH-based robot deployment workflow
+- SSH-based deployment workflow
 
 ### Programming
 
@@ -320,7 +280,14 @@ This work was completed as part of a team Keystone project on reinforcement-lear
 
 I served as the **group leader** and participated in the development, integration, testing, and organization of the staged technical pipeline.
 
-The project was completed collaboratively with contributions from team members across simulation deployment, motion processing, policy training, data processing, and experimental validation.
+The project was completed collaboratively, with contributions across:
+
+- motion processing
+- simulation deployment
+- tracking-policy training
+- data conversion
+- experimental validation
+- platform integration
 
 ---
 
@@ -336,10 +303,10 @@ Completed stages include:
 - G1 tracking-policy training
 - simulation-based policy validation
 - cross-simulation verification
-- motion-refinement workflow
+- Blender-based motion refinement
 - preliminary real-device deployment preparation
 
-The following are considered future work:
+Future work includes:
 
 - task-specific welding reinforcement learning
 - full humanoid welding policy design
@@ -352,28 +319,26 @@ The following are considered future work:
 
 ## 📁 Repository Structure
 
-The repository will gradually include selected project materials.
-
 ```text
 humanoid-motion-learning/
 │
 ├── assets/
 │   ├── images/
-│   ├── gifs/
+│   │   ├── Blender motion refinement.png
+│   │   ├── RoboJuDo cross-simulation.png
+│   │   ├── humanoid motion pipeline.png
+│   │   └── video-driven full-body motion recovery.png
+│   │
 │   └── videos/
-│
-├── motion/
-│   └── selected motion-processing examples
-│
-├── scripts/
-│   └── selected utility scripts
+│       └── g1_tracking_demo.mp4
 │
 ├── README.md
-│
 └── .gitignore
 ```
 
-Some project components depend on external research repositories and simulation frameworks and are therefore not redistributed directly here.
+Selected visual materials and demonstrations are included here for research-portfolio purposes.
+
+Some components of the full workflow depend on external research repositories and simulation frameworks and are therefore not redistributed directly in this repository.
 
 ---
 
