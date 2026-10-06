@@ -1,2 +1,2 @@
-# humanoid-robot-learning
-Humanoid robot learning and simulation platform for motion retargeting, reinforcement learning, and policy validation.
+# humanoid-motion-learning
+Video-driven motion recovery, retargeting, reinforcement-learning tracking, and cross-simulation validation for the Unitree G1 humanoid robot.
