@@ -6,6 +6,8 @@ This project was developed as part of a broader research effort on reinforcement
 
 > 📌 **Project status:** The motion-learning pipeline has been established and validated in simulation.  
 > Real-robot deployment is currently at the preliminary integration and safety-validation stage.
+>
+> **Release status:** This repository is a research portfolio and technical overview. Selected visual results are included; the complete training stack is not redistributed here.
 
 ---
 
@@ -364,10 +366,10 @@ Beijing University of Technology
 
 This humanoid motion-learning pipeline is part of a broader robotics research workflow.
 
-- 🤖 **Task-Registered Robotic Welding Framework** — sim-to-real perception, RGB-D geometry recovery, weld-path generation, and robot interfaces
-- 🎮 **Tetris Closed-Loop Control** — foundational perception–decision–execution verification platform
+- [🤖 **Task-Registered Robotic Welding Framework**](https://github.com/wwryy/robotic-welding-platform) — sim-to-real perception, RGB-D geometry recovery, weld-path generation, and robot interfaces
+- [🎮 **Tetris Closed-Loop Control**](https://github.com/wwryy/tetris-closed-loop-control) — foundational perception–decision–execution verification platform
 
-Links will be added after the corresponding repositories are completed.
+The original project materials and media remain all rights reserved unless otherwise noted.
 
 ---
 
