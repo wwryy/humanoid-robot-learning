@@ -209,7 +209,15 @@ The trained policy was exported for deployment, and the communication and execut
 
 ### 🎥 Preliminary Hardware Demo
 
-▶️ **[Watch the Unitree G1 real-robot demonstration](assets/videos/g1_tracking_demo.mp4)**
+<p align="center">
+  <img src="assets/videos/g1_tracking_demo.gif" width="500">
+</p>
+
+<p align="center">
+  <i>Preliminary on-device motion demonstration of the Unitree G1 during real-robot deployment preparation.</i>
+</p>
+
+▶️ [View the full MP4 demonstration](assets/videos/g1_tracking_demo.mp4)
 
 *Preliminary on-device motion demonstration during real-robot deployment preparation.*
 
